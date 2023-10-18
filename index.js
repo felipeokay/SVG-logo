@@ -13,8 +13,12 @@
 // WHEN I open the `logo.svg` file in a browser
 // THEN I am shown a 300x200 pixel image that matches the criteria I entered
 
-const inquirer = require(inquirer);
-const fs = require(fs);
+const inquirer = require("inquirer");
+const fs = require("fs");
+
+const circle = require("./lib/circle")
+const square = require("./lib/square")
+const triangle = require("./lib/triangle")
 
 const questions = [
     {
@@ -39,3 +43,21 @@ const questions = [
         message: "Enter shape color keyword (or a hexadecimal number):"
     }
 ];
+
+inquirer
+    .prompt(questions)
+    .then((data) => {
+        let shape;
+        if (data.shape === "Circle") {
+            shape = new Circle(data.text, data.textColor, "circle", data.shapeColor)
+        } else if (data.shape === "Square") {
+            shape = new Square(data.text, data.textColor, "rect", data.shapeColor)
+        } else {
+            shape = new Triangle(data.text, data.textColor, "polygon", data.shapeColor)
+        }
+
+        fs.writeFile('/examples/logo.svg', shape.render(), (err) =>
+            err ? console.log(err) : console.log('You have successfully created a custom logo!')
+        );
+
+    })
